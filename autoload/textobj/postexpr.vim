@@ -94,6 +94,7 @@ function! s:select(in) " {{{
     if !s:iskeyword(pos[0])
       break
     endif
+    let epos = pos
     let pos = s:next_pos(pos)
   endwhile
 
@@ -116,13 +117,12 @@ function! s:select(in) " {{{
           break
         elseif c == close
           call remove(stack, -1)
+          let epos = pos
           break
         endif
 
       endwhile
     endwhile
-
-    let epos = pos
 
     let pos = s:next_pos(pos)
     let pos = s:skip_space(pos, a:in)
