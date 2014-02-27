@@ -30,7 +30,8 @@ function! s:next_pos(pos) " {{{
     return [a:pos[3][c], l, c+1, a:pos[3], len]
   else
     let line = getline(l+1)
-    return [line[0], l+1, 1, line, len(line)]
+    return ["\n", l+1, 0, line, len(line)]
+"    return [line[0], l+1, 1, line, len(line)]
   endif
 endfunction " }}}
 
@@ -41,10 +42,13 @@ function! s:prev_pos(pos) " {{{
 
   if c - 2 >= 0
     return [a:pos[3][c-2], l, c-1, a:pos[3], len]
+  elseif l == 1
+    return ['', l, c-1, a:pos[3], len]
   else
     let line = getline(l-1)
     let len = len(line)
-    return [line[len-1], l-1, len, line, len]
+    return ['\n', l-1, len+1, line, len]
+    " return [line[len-1], l-1, len, line, len]
   endif
 endfunction " }}}
 
@@ -55,7 +59,7 @@ function! s:skip_space(pos, in) " {{{
       let p = s:next_pos(p)
     endwhile
   else
-    while p[0] =~ '\s' || p[0] =~ '\n' || p[0] =~ '\r'
+    while p[0] =~ '\s' || p[0] =~ "\n"
       let p = s:next_pos(p)
     endwhile
   endif
