@@ -47,7 +47,7 @@ function! s:prev_pos(pos) " {{{
   else
     let line = getline(l-1)
     let len = len(line)
-    return ['\n', l-1, len+1, line, len]
+    return ["\n", l-1, len+1, line, len]
     " return [line[len-1], l-1, len, line, len]
   endif
 endfunction " }}}
