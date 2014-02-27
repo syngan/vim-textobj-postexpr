@@ -78,14 +78,24 @@ function! s:get_startpos(pos) " {{{
 
 endfunction " }}}
 
+function! s:to_cursorpos(pos, base) " {{{
+  return [a:base[0], a:pos[1], a:pos[2], a:base[3]]
+endfunction " }}}
+
+function! s:get_maxline(lnum) " {{{
+  let m = get(b:, "textobj_postexpr_search_limit",
+  \       get(g:, "textobj_postexpr_search_limit", 30))
+  let m = a:lnum + m
+  return min([m, line("$")])
+endfunction " }}}
+
 function! s:select(in) " {{{
   let spos = getpos(".")
 
   let line = getline(spos[1])
   let pos = [line[spos[2]-1], spos[1], spos[2], line, len(line)]
 
-  let maxline = spos[1] + 30
-
+  let maxline = s:get_maxline(spos[1])
   if !s:iskeyword(pos[0])
     return
   endif
@@ -136,8 +146,8 @@ function! s:select(in) " {{{
   endwhile
 
   let bpos = s:get_startpos([line[spos[2]-1], spos[1], spos[2], line, len(line)])
-  let bpos = [spos[0], bpos[1], bpos[2], spos[3]]
-  let npos = [spos[0], epos[1], epos[2], spos[3]]
+  let bpos = s:to_cursorpos(bpos, spos)
+  let npos = s:to_cursorpos(epos, spos)
 
   return ['v', bpos, npos]
 endfunction " }}}
