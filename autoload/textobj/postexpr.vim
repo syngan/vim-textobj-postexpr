@@ -120,11 +120,9 @@ function! s:select(in) " {{{
 
     let pos = s:next_pos(pos)
     let pos = s:skip_space(pos, a:in)
-    if pos[0] == '['
-      " hoge[a][b] みたいなの
-      let stack += [pos[0]]
-    elseif pos[0] == '('
-      " hoge[a](b)  みたいなの
+
+    " hoge[a][b], " hoge[a](b)  みたいなの
+    if has_key(s:block, pos[0])
       let stack += [pos[0]]
     else
       break
