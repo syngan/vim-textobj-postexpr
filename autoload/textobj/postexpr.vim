@@ -62,6 +62,19 @@ function! s:skip_space(pos, in) " {{{
   return p
 endfunction " }}}
 
+function! s:get_startpos(pos) " {{{
+  let b = a:pos
+  while 1
+    let tpos = s:prev_pos(b)
+    if !s:iskeyword(tpos[0])
+      break
+    endif
+    let b = tpos
+  endwhile
+
+  return b
+endfunction " }}}
+
 " postexpr := name
 "           | name '[' any ']'
 "           | name '(' any ')'
@@ -118,14 +131,7 @@ function! s:select(in) " {{{
     endif
   endwhile
 
-  let bpos = [line[spos[2]-1], spos[1], spos[2], line, len(line)]
-  while 1
-    let tpos = s:prev_pos(bpos)
-    if !s:iskeyword(tpos[0])
-      break
-    endif
-    let bpos = tpos
-  endwhile
+  let bpos = s:get_startpos([line[spos[2]-1], spos[1], spos[2], line, len(line)])
   let bpos = [spos[0], bpos[1], bpos[2], spos[3]]
   let npos = [spos[0], epos[1], epos[2], spos[3]]
 
