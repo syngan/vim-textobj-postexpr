@@ -71,22 +71,20 @@ function! s:get_startpos(pos) " {{{
   while 1
     let tpos = s:prev_pos(b)
     if !s:iskeyword(tpos[0])
-      break
+      return b
     endif
     let b = tpos
   endwhile
 
-  return b
 endfunction " }}}
 
-" postexpr := name
-"           | name '[' any ']'
-"           | name '(' any ')'
 function! s:select(in) " {{{
   let spos = getpos(".")
 
   let line = getline(spos[1])
   let pos = [line[spos[2]-1], spos[1], spos[2], line, len(line)]
+
+  let maxline = spos[1] + 30
 
   if !s:iskeyword(pos[0])
     return
@@ -109,6 +107,9 @@ function! s:select(in) " {{{
 
       while 1
         let pos = s:next_pos(pos)
+        if pos[1] > maxline
+          return
+        endif
         let c = pos[0]
         if has_key(s:block, c)
           let stack = stack + [c]
@@ -117,6 +118,7 @@ function! s:select(in) " {{{
           call remove(stack, -1)
           break
         endif
+
       endwhile
     endwhile
 
