@@ -64,3 +64,6 @@ hoge[█]()
 (1)foo
 ```
 
+## blog
+
+- [hoge() で囲みたい症候群](http://d.hatena.ne.jp/syngan/20140301/1393676442)
