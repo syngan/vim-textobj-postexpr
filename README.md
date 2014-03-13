@@ -12,7 +12,7 @@ mapping:
 - `<Plug>(textobj-postexpr-i)`
 
 
-## example
+# Examples
 
 - `omap av <Plug>(textobj-postexpr-a)`
 - `omap iv <Plug>(textobj-postexpr-i)`
@@ -64,6 +64,7 @@ hoge[█]()
 (1)foo
 ```
 
-## blog
+
+# Blog in Japanese
 
 - [hoge() で囲みたい症候群](http://d.hatena.ne.jp/syngan/20140301/1393676442)
