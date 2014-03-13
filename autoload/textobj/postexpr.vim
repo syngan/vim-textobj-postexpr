@@ -16,8 +16,8 @@ function! textobj#postexpr#select_i() " {{{
   return s:select(1)
 endfunction " }}}
 
-function! s:iskeyword(s) " {{{
-  return a:s =~ '\k'
+function! s:iskeyword(s, pattern) " {{{
+  return a:s =~ a:pattern
 endfunction " }}}
 
 function! s:next_pos(pos) " {{{
@@ -66,11 +66,12 @@ function! s:skip_space(pos, in) " {{{
   return p
 endfunction " }}}
 
-function! s:get_startpos(pos) " {{{
+function! s:get_startpos(pos, keyword_pattern) " {{{
   let b = a:pos
+
   while 1
     let tpos = s:prev_pos(b)
-    if !s:iskeyword(tpos[0])
+    if !s:iskeyword(tpos[0], a:keyword_pattern)
       return b
     endif
     let b = tpos
@@ -96,12 +97,22 @@ function! s:select(in) " {{{
   let pos = [line[spos[2]-1], spos[1], spos[2], line, len(line)]
 
   let maxline = s:get_maxline(spos[1])
-  if !s:iskeyword(pos[0])
+
+  let keyword_pattern = '\k'
+  if exists('g:textobj_postexpr')
+    if &filetype != '' && has_key(g:textobj_postexpr, &filetype) && has_key(g:textobj_postexpr[&filetype], 'keyword_pattern')
+      let keyword_pattern = g:textobj_postexpr[&filetype].keyword_pattern
+    elseif has_key(g:textobj_postexpr, '-') && has_key(g:textobj_postexpr.filetype, 'keyword_pattern')
+      let keyword_pattern = g:textobj_postexpr['-'].keyword_pattern
+    endif
+  endif
+
+  if !s:iskeyword(pos[0], keyword_pattern)
     return
   endif
 
   while 1
-    if !s:iskeyword(pos[0])
+    if !s:iskeyword(pos[0], keyword_pattern)
       break
     endif
     let epos = pos
@@ -145,7 +156,7 @@ function! s:select(in) " {{{
     endif
   endwhile
 
-  let bpos = s:get_startpos([line[spos[2]-1], spos[1], spos[2], line, len(line)])
+  let bpos = s:get_startpos([line[spos[2]-1], spos[1], spos[2], line, len(line)], keyword_pattern)
   let bpos = s:to_cursorpos(bpos, spos)
   let npos = s:to_cursorpos(epos, spos)
 
