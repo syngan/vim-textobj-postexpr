@@ -124,13 +124,14 @@ function! s:select(in) " {{{
     let pos = s:next_pos(pos)
   endwhile
 
+  let block = s:get_val('keyword_pattern', s:block)
   let pos = s:skip_space(pos, a:in)
 
-  let stack = has_key(s:block, pos[0]) ? [pos[0]] : []
+  let stack = has_key(block, pos[0]) ? [pos[0]] : []
   while 1
     while len(stack) > 0
       let open = stack[-1]
-      let close = s:block[open]
+      let close = block[open]
 
       while 1
         let pos = s:next_pos(pos)
@@ -138,7 +139,7 @@ function! s:select(in) " {{{
           return
         endif
         let c = pos[0]
-        if has_key(s:block, c)
+        if has_key(block, c)
           let stack = stack + [c]
           break
         elseif c == close
@@ -154,7 +155,7 @@ function! s:select(in) " {{{
     let pos = s:skip_space(pos, a:in)
 
     " hoge[a][b], " hoge[a](b)  みたいなの
-    if has_key(s:block, pos[0])
+    if has_key(block, pos[0])
       let stack += [pos[0]]
     else
       break
