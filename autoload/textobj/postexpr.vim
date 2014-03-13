@@ -124,7 +124,7 @@ function! s:select(in) " {{{
     let pos = s:next_pos(pos)
   endwhile
 
-  let block = s:get_val('keyword_pattern', s:block)
+  let block = s:get_val('block', s:block)
   let pos = s:skip_space(pos, a:in)
 
   let stack = has_key(block, pos[0]) ? [pos[0]] : []
