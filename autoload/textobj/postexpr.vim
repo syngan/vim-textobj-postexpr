@@ -16,6 +16,18 @@ function! textobj#postexpr#select_i() " {{{
   return s:select(1)
 endfunction " }}}
 
+function! s:get_val(key, defval) " {{{
+  if exists('g:textobj_postexpr')
+    if &filetype != '' && has_key(g:textobj_postexpr, &filetype) && has_key(g:textobj_postexpr[&filetype], a:key)
+      return g:textobj_postexpr[&filetype][a:key]
+    elseif has_key(g:textobj_postexpr, '-') && has_key(g:textobj_postexpr.filetype, a:key)
+      return g:textobj_postexpr['-'][a:key]
+    endif
+  endif
+
+  return a:defval
+endfunction " }}}
+
 function! s:iskeyword(s, pattern) " {{{
   return a:s =~ a:pattern
 endfunction " }}}
@@ -98,14 +110,7 @@ function! s:select(in) " {{{
 
   let maxline = s:get_maxline(spos[1])
 
-  let keyword_pattern = '\k'
-  if exists('g:textobj_postexpr')
-    if &filetype != '' && has_key(g:textobj_postexpr, &filetype) && has_key(g:textobj_postexpr[&filetype], 'keyword_pattern')
-      let keyword_pattern = g:textobj_postexpr[&filetype].keyword_pattern
-    elseif has_key(g:textobj_postexpr, '-') && has_key(g:textobj_postexpr.filetype, 'keyword_pattern')
-      let keyword_pattern = g:textobj_postexpr['-'].keyword_pattern
-    endif
-  endif
+  let keyword_pattern = s:get_val('keyword_pattern', '\k')
 
   if !s:iskeyword(pos[0], keyword_pattern)
     return
