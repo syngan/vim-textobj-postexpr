@@ -20,7 +20,7 @@ function! s:get_val(key, defval) " {{{
   if exists('g:textobj_postexpr')
     if &filetype != '' && has_key(g:textobj_postexpr, &filetype) && has_key(g:textobj_postexpr[&filetype], a:key)
       return g:textobj_postexpr[&filetype][a:key]
-    elseif has_key(g:textobj_postexpr, '-') && has_key(g:textobj_postexpr.filetype, a:key)
+    elseif has_key(g:textobj_postexpr, '-') && has_key(g:textobj_postexpr['-'], a:key)
       return g:textobj_postexpr['-'][a:key]
     endif
   endif
