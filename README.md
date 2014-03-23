@@ -64,6 +64,16 @@ hoge[█]()
 (1)foo
 ```
 
+# Customize
+
+for LaTeX
+```vim
+g:textobj_postexpr.tex = {
+\	'keyword_expr' : '\\\k\+',
+\	'block' : {'{' : '}', '[' : ']'}
+\}
+
+```
 
 # Blog in Japanese
 
