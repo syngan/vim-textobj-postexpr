@@ -1,7 +1,7 @@
 vim-textobj-postexpr
 ====================
 
-[![Build Status](https://travis-ci.org/syngan/vim-textobj-postexpr.png?branch=master)](https://travis-ci.org/syngan/vim-textobj-postexpr)
+[![Build Status](https://travis-ci.org/syngan/vim-textobj-postexpr.svg?branch=master)](https://travis-ci.org/syngan/vim-textobj-postexpr)
 
 Required:
 - kana/vim-textobj-user
