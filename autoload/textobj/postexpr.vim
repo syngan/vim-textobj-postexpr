@@ -8,6 +8,12 @@ let s:block = {
   \ '[' : ']',
   \}
 
+function! s:log(str) " {{{
+  if exists('g:textobj_postexpr_debug') && g:textobj_postexpr_debug
+    silent! call vimconsole#log(a:str)
+  endif
+endfunction " }}}
+
 function! textobj#postexpr#select_a() " {{{
   return s:select(0)
 endfunction " }}}
@@ -102,32 +108,45 @@ function! s:get_maxline(lnum) " {{{
   return min([m, line("$")])
 endfunction " }}}
 
-function! s:select(in) " {{{
-  let spos = getpos(".")
-
-  let line = getline(spos[1])
-  let pos = [line[spos[2]-1], spos[1], spos[2], line, len(line)]
-
-  let maxline = s:get_maxline(spos[1])
-
-  let keyword_pattern = s:get_val('keyword_pattern', '\k')
-
-  if !s:iskeyword(pos[0], keyword_pattern)
-    return
-  endif
-
+function! s:head(line, spos) " {{{
+  let col = a:spos[2] - 1
+  let keyword_expr = s:get_val('keyword_expr', '\k\+')
+  call s:log("expr=" . keyword_expr)
+  let start = 0
   while 1
-    if !s:iskeyword(pos[0], keyword_pattern)
+    let mpos = match(a:line, keyword_expr, start)
+    if mpos == -1
+      call s:log("not found")
+      throw 'not found'
+    endif
+    let mstr = matchstr(a:line[mpos == 0 ? mpos : mpos - 1 : ], keyword_expr)
+    call s:log("mstr=" . mstr)
+    let mlen = len(mstr)
+    call s:log("mpos=" . string([mpos, col, mpos+mlen]))
+    if mpos <= col && col < mpos + mlen
       break
     endif
-    let epos = pos
-    let pos = s:next_pos(pos)
+
+    let start = mpos + mlen
   endwhile
+
+  let head = [a:spos[0], a:spos[1], mpos + 1, a:spos[3]]
+  let tail = [a:spos[0], a:spos[1], mpos + mlen, a:spos[3]]
+  return [head, tail]
+
+endfunction " }}}
+
+function! s:post(line, spos, in) " {{{
+  let row = a:spos[1]
+  let col = a:spos[2]
+  let pos = [a:line[col-1], row, col, a:line, len(a:line)]
+  let maxline = s:get_maxline(row)
 
   let block = s:get_val('block', s:block)
   let pos = s:skip_space(pos, a:in)
 
   let stack = has_key(block, pos[0]) ? [pos[0]] : []
+  let epos = pos
   while 1
     while len(stack) > 0
       let open = stack[-1]
@@ -162,11 +181,22 @@ function! s:select(in) " {{{
     endif
   endwhile
 
-  let bpos = s:get_startpos([line[spos[2]-1], spos[1], spos[2], line, len(line)], keyword_pattern)
-  let bpos = s:to_cursorpos(bpos, spos)
-  let npos = s:to_cursorpos(epos, spos)
+  return s:to_cursorpos(epos, a:spos)
+endfunction " }}}
 
-  return ['v', bpos, npos]
+function! s:select(in) " {{{
+  try
+    let spos = getpos(".")
+    let line = getline(spos[1])
+    let [head, tail] = s:head(line, spos)
+    let npos = s:post(line, tail, a:in)
+
+    return ['v', head, npos]
+  catch
+    call s:log(v:exception)
+    return 0
+  endtry
+
 endfunction " }}}
 
 let &cpo = s:save_cpo
