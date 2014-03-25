@@ -217,7 +217,7 @@ describe '<Plug>(textobj-posrexpr-a)'
   end
 
   it 'remove only koko 0'
-    normal! 4G
+    normal! 4G0
     execute 'normal' "viv\<Esc>"
     execute 'normal!' "`>"
     Expect getpos('.')[1 : 2] == [4, 4]
@@ -226,7 +226,7 @@ describe '<Plug>(textobj-posrexpr-a)'
   end
 
   it 'remove only koko 1'
-    normal! 4G0l
+    normal! 4G01l
     execute 'normal' "viv\<Esc>"
     execute 'normal!' "`>"
     Expect getpos('.')[1 : 2] == [4, 4]
@@ -235,7 +235,7 @@ describe '<Plug>(textobj-posrexpr-a)'
   end
 
   it 'remove only koko 2'
-    normal! 4G2l
+    normal! 4G02l
     execute 'normal' "viv\<Esc>"
     execute 'normal!' "`>"
     Expect getpos('.')[1 : 2] == [4, 4]
@@ -244,7 +244,7 @@ describe '<Plug>(textobj-posrexpr-a)'
   end
 
   it 'remove only koko 3'
-    normal! 4G3l
+    normal! 4G03l
     execute 'normal' "viv\<Esc>"
     execute 'normal!' "`>"
     Expect getpos('.')[1 : 2] == [4, 4]
@@ -253,7 +253,7 @@ describe '<Plug>(textobj-posrexpr-a)'
   end
 
   it 'remove only empty'
-    normal! 4G4l
+    normal! 4G04l
     execute 'normal' "viv\<Esc>"
     execute 'normal!' "`>"
     Expect getpos('.')[1 : 2] == [4, 5]
@@ -262,7 +262,7 @@ describe '<Plug>(textobj-posrexpr-a)'
   end
 
   it 'remove only ha'
-    normal! 4G5l
+    normal! 4G05l
     execute 'normal' "viv\<Esc>"
     execute 'normal!' "`>"
     Expect getpos('.')[1 : 2] == [4, 7]
@@ -271,7 +271,7 @@ describe '<Plug>(textobj-posrexpr-a)'
   end
 
   it 'remove only ha'
-    normal! 4G6l
+    normal! 4G06l
     execute 'normal' "viv\<Esc>"
     execute 'normal!' "`>"
     Expect getpos('.')[1 : 2] == [4, 7]
