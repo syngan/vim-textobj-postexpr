@@ -109,6 +109,7 @@ function! s:get_maxline(lnum) " {{{
 endfunction " }}}
 
 function! s:head(line, spos) " {{{
+  " hoge[tako](foo) の hoge 部分抽出. 改行は許さない.
   let col = a:spos[2] - 1
   let keyword_expr = s:get_val('keyword_expr', '\k\+')
   call s:log("expr=" . keyword_expr)
@@ -136,12 +137,19 @@ function! s:head(line, spos) " {{{
 
 endfunction " }}}
 
+function! s:is_comment(lnum, col) " {{{
+  return synIDattr(synIDtrans(synID(a:lnum, a:col, 1)), 'name') ==# "Comment"
+endfunction " }}}
+
 function! s:post(line, spos, in) " {{{
+  " hoge[tako](foo) の [tako](foo) の抽出
   let row = a:spos[1]
   let col = a:spos[2]
   let pos = [a:line[col-1], row, col, a:line, len(a:line)]
   let maxline = s:get_maxline(row)
 
+  let comment = s:is_comment(row, col)
+  let chk_synid = s:get_val('check_comment', 0)
   let block = s:get_val('block', s:block)
   let pos = s:skip_space(pos, a:in)
 
@@ -156,6 +164,9 @@ function! s:post(line, spos, in) " {{{
         let pos = s:next_pos(pos)
         if pos[1] > maxline
           return
+        endif
+        if chk_synid && comment != s:is_comment(pos[1], pos[2])
+          continue
         endif
         let c = pos[0]
         if has_key(block, c)
