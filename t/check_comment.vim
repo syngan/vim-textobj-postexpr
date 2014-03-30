@@ -21,6 +21,7 @@ describe '<Plug>(textobj-posrexpr-i)'
     vmap av <Plug>(textobj-postexpr-a)
     vmap iv <Plug>(textobj-postexpr-i)
     setlocal filetype=tex
+    syntax on
     call s:paste_code()
   end
 
@@ -47,6 +48,10 @@ describe '<Plug>(textobj-posrexpr-i)'
   it 'set -'
     let g:textobj_postexpr = {'-' : {'check_comment' : '1'}}
     normal! 1G0ft
+    Expect &filetype == 'tex'
+    Expect synIDattr(synIDtrans(synID(1, 1, 1)), 'name') !=? "Comment"
+    Expect synIDattr(synIDtrans(synID(2, 2, 1)), 'name') ==? "Comment"
+    Expect synIDattr(synIDtrans(synID(3, 1, 1)), 'name') !=? "Comment"
     execute 'normal' "viv\<Esc>"
     execute 'normal!' "`>"
     Expect getpos('.')[1 : 2] == [3, 1]

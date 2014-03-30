@@ -138,7 +138,7 @@ function! s:head(line, spos) " {{{
 endfunction " }}}
 
 function! s:is_comment(lnum, col) " {{{
-  return synIDattr(synIDtrans(synID(a:lnum, a:col, 1)), 'name') ==# "Comment"
+  return synIDattr(synIDtrans(synID(a:lnum, a:col, 1)), 'name') ==? "Comment"
 endfunction " }}}
 
 function! s:post(line, spos, in) " {{{
@@ -165,6 +165,7 @@ function! s:post(line, spos, in) " {{{
         if pos[1] > maxline
           return
         endif
+
         if chk_synid && comment != s:is_comment(pos[1], pos[2])
           continue
         endif
